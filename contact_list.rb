@@ -25,8 +25,9 @@ puts "Here is a list of available commands: \b
 
   case user_input
   when "new"
+    ARGV.clear
     puts "Please input the new contact's name: "
-    name = gets.chomp.to_s
+    name = gets.chomp.to_s.capitalize!
     puts "Please input the new contact's email: "
     email = gets.chomp.to_s
     Contact.create(name, email)

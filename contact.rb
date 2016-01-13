@@ -7,7 +7,7 @@ class Contact
   
 
   def initialize(name, email)
-    @name = name
+    @name = name.capitalize!
     @email = email
     index = CSV.read('contacts.csv').length + 1
     contacts = File.open('contacts.csv', 'a')
