@@ -7,7 +7,7 @@ class Contact
   
 
   def initialize(name, email)
-    @name = name.capitalize!
+    @name = name
     @email = email
     index = CSV.read('contacts.csv').length + 1
     contacts = File.open('contacts.csv', 'a')
@@ -41,6 +41,7 @@ class Contact
     end
 
     # Returns an array of contacts who match the given term.
+    #use select and maybe come up with a method that changes the display
     def search(term)
       term = term.to_s
       File.open('contacts.csv').readlines.each do |line|
