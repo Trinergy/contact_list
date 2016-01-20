@@ -1,16 +1,5 @@
 require_relative 'contact'
-require 'pg'
-
-# # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
-
-
-
-# class ContactList
-
-#   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
-  
-  
-# end
+# # Interfaces between a user and their contact list. Reads from and writes to standard I/O
 
 puts "Here is a list of available commands: \b
        new      - Create a new contact\b
@@ -29,23 +18,25 @@ puts "Here is a list of available commands: \b
   case user_input
   when "new"
     ARGV.clear
-    puts "Please input the new contact's name: "
-    name = gets.chomp.to_s.capitalize!
-    puts "Please input the new contact's email: "
-    email = gets.chomp.to_s
-    Contact.create(name, email)
-    puts "Your new contact has been added to the list."
+    puts "What is your new contact's name?"
+    contact_name = gets.chomp
+    puts "What is #{contact_name}'s email?"
+    contact_email = gets.chomp
+    Contact.create(name: contact_name,
+                   email: contact_email)
   when "list"
-    puts Contact.all
+    Contact.all.each do |contact|
+      puts contact.inspect
+    end
   when "show"
     if ARGV.length > 1
       id = ARGV[1]
     else
       ARGV.clear
-      puts "Please enter the contact's index: "
+      puts "Please enter the contact's id: "
       id = gets.chomp.to_s
     end
-    puts Contact.find(id)
+    puts Contact.find(id).inspect
   when "search"
     if ARGV.length > 1
       input = ARGV[1]
@@ -54,7 +45,9 @@ puts "Here is a list of available commands: \b
       puts "Please enter the contact's name or email: "
       input = gets.chomp.to_s
     end
-    Contact.search(input)
+    Contact.where("name LIKE '%' || ? || '%' OR email LIKE '%' || ? || '%'", input, input).each do |contact|
+      puts contact.inspect
+    end
   when "update"
     if ARGV.length > 1
       input = ARGV[1]
@@ -64,7 +57,12 @@ puts "Here is a list of available commands: \b
       input = gets.chomp.to_s
     end
     ARGV.clear
-    Contact.update(input)
+    contact = Contact.find(input)
+    puts "What is #{contact.name}'s new name? "
+    name = gets.chomp
+    puts "What is #{contact.name}'s new email? \b old email:#{contact.email}"
+    email = gets.chomp
+    contact.update(name: name, email: email)
   when "delete"
     if ARGV.length > 1
       input = ARGV[1]
@@ -73,5 +71,5 @@ puts "Here is a list of available commands: \b
       puts "Please enter the contact's id: "
       input = gets.chomp.to_s
     end
-    Contact.delete(input)
+    Contact.find(input).destroy
   end
